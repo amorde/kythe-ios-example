@@ -159,3 +159,34 @@ INFO: 104 processes: 36 disk cache hit, 66 internal, 2 local.
 INFO: Build completed successfully, 104 total actions
 ```
 
+### Running the Kythe indexers
+
+After building with the compilation extractors we can now run the actual indexers
+to index the code. The steps for this are collected into a script.
+
+```
+# First argument is a folder name which will be the destination for the produced files
+./index_from_bazel.rb kythe_database
+```
+
+This will likely encounter another set of errors:
+
+```
+... (ommitted for brevity)
+/Applications/Xcode/15.1/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.2.sdk/usr/include/module.modulemap:273:11: header 'sched.h' not found
+/Applications/Xcode/15.1/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.2.sdk/usr/include/module.modulemap:273:11: header 'sched.h' not found
+/Applications/Xcode/15.1/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.2.sdk/usr/include/module.modulemap:273:11: header 'sched.h' not found
+/Applications/Xcode/15.1/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.2.sdk/usr/include/module.modulemap:273:11: header 'sched.h' not found
+/Applications/Xcode/15.1/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.2.sdk/System/Library/Frameworks/QuartzCore.framework/Headers/CABase.h:16:10: could not build module 'CoreFoundation'
+/Applications/Xcode/15.1/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.2.sdk/System/Library/Frameworks/Symbols.framework/Headers/Symbols.h:8:9: could not build module 'Foundation'
+/Applications/Xcode/15.1/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.2.sdk/System/Library/Frameworks/FileProvider.framework/Headers/NSFileProviderDomain.h:8:9: could not build module 'Foundation'
+/Applications/Xcode/15.1/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.2.sdk/System/Library/Frameworks/UserNotifications.framework/Headers/NSString+UserNotifications.h:8:9: could not build module 'Foundation'
+bazel-out/ios-sim_arm64-min14.0-applebin_ios-ios_sim_arm64-dbg-ST-9ef79b6d9025/bin/ios/ModuleA/ModuleA.framework/Headers/ModuleA-umbrella.h:2:13: could not build module 'Foundation'
+```
+
+Despite the errors some data will be collected and the kythe CLI can be used to explore it:
+
+```
+$KYTHE_RELEASE/tools/kythe --api kythe_database decor "kythe://kythe-ios-example?path=ios/App/main.m"
+```
+
