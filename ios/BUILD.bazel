@@ -1,0 +1,29 @@
+load("@build_bazel_rules_ios//rules:framework.bzl", "apple_framework")
+load("@build_bazel_rules_ios//rules:app.bzl", "ios_application")
+
+apple_framework(
+    name = "ModuleA",
+    srcs = glob(["ModuleA/*"]),
+    platforms = {"ios": "14.0"},
+    visibility = ["//visibility:public"],
+)
+
+apple_framework(
+    name = "ModuleB",
+    srcs = glob(["ModuleB/*"]),
+    platforms = {"ios": "14.0"},
+    visibility = ["//visibility:public"],
+    deps = [":ModuleA"],
+)
+
+ios_application(
+    name = "App",
+    srcs = ["App/main.m"],
+    bundle_id = "com.example.app",
+    minimum_os_version = "14.0",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":ModuleA",
+        ":ModuleB",
+    ],
+)

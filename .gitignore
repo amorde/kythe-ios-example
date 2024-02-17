@@ -1,0 +1,4 @@
+bazel-*
+kythe_tmp/
+kythe_database/
+

@@ -1,0 +1,41 @@
+
+build --experimental_strict_conflict_checks
+
+build --verbose_failures # Print the full command line for commands that failed
+
+build --compilation_mode=dbg
+
+# Use 'worker' strategy for swift compilation
+build --strategy=SwiftCompile=worker
+
+build --features swift.use_global_index_store
+build --features swift.index_while_building
+
+build --features apple.arm64_simulator_use_device_deps
+
+# Allow for server to start
+startup --local_startup_timeout_secs=240
+
+build --apple_platform_type=ios
+
+build --disk_cache=~/Library/Caches/bazel-kythe-ios-example-cache
+
+# Remap file source paths in debug info to make sure absolute paths aren't embedded.
+build --features=debug_prefix_map_pwd_is_dot
+
+# Removes working directory as prefix of paths in debug info so builds are more reproducible.
+build --features=oso_prefix_is_pwd
+
+build --features swift.cacheable_swiftmodules
+build --features swift.use_global_module_cache
+build --features swift.use_global_index_store
+build --features swift.index_while_building
+
+# Use 'worker' strategy for swift compilation
+build --strategy=SwiftCompile=worker
+build --strategy=SwiftDeriveFiles=local
+
+# Load a user.bazelrc
+try-import %workspace%/user.bazelrc
+
+build --features=apple.virtualize_frameworks
